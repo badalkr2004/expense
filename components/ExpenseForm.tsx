@@ -1,36 +1,37 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { Category } from "@/types/index.types";
 
 export default function ExpenseForm() {
-  const [amount, setAmount] = useState("")
-  const [description, setDescription] = useState("")
-  const [categoryId, setCategoryId] = useState("")
-  const [categories, setCategories] = useState([])
+  const [amount, setAmount] = useState("");
+  const [description, setDescription] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     fetch("/api/categories")
       .then((res) => res.json())
-      .then(setCategories)
-  }, [])
+      .then(setCategories);
+  }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const response = await fetch("/api/expenses", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount, description, categoryId }),
-    })
+    });
     if (response.ok) {
-      setAmount("")
-      setDescription("")
-      setCategoryId("")
+      setAmount("");
+      setDescription("");
+      setCategoryId("");
       // Trigger an event to update the expense list
-      const event = new CustomEvent("expenseAdded")
-      window.dispatchEvent(event)
+      const event = new CustomEvent("expenseAdded");
+      window.dispatchEvent(event);
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -75,6 +76,5 @@ export default function ExpenseForm() {
         Add Expense
       </motion.button>
     </form>
-  )
+  );
 }
-
