@@ -4,7 +4,7 @@ import { getUserIdFromRequest } from "@/lib/jwt";
 import { Prisma } from "@prisma/client";
 
 export async function GET(request: Request) {
-  console.log(request);
+
   const userId = getUserIdFromRequest(request);
   
   if (!userId) {

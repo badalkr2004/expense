@@ -70,7 +70,7 @@ export default function ExpenseList() {
   }, [token]);
 
   return (
-    <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+    <div className="space-y-4 max-h-[800px] overflow-y-auto pr-2">
       <div className="flex bg-green-300 py-2 px-4 rounded-lg font-semibold w-fit">
         <p>Total Amount: ₹{totalAmount.toFixed(2)}</p>
       </div>
