@@ -12,15 +12,23 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function ExpenseList() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [totalAmount, setTotalAmount] = useState(0);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { token } = useAuth();
 
   const fetchExpenses = () => {
-    fetch("/api/expenses")
+    if (!token) return;
+
+    fetch("/api/expenses", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setExpenses(data);
@@ -34,8 +42,13 @@ export default function ExpenseList() {
   };
 
   const deleteExpense = (id: string) => {
+    if (!token) return;
+
     fetch(`/api/expenses/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then((res) => res.json())
       .then(() => {
@@ -45,14 +58,16 @@ export default function ExpenseList() {
   };
 
   useEffect(() => {
-    fetchExpenses();
+    if (token) {
+      fetchExpenses();
+    }
     window.addEventListener("expenseAdded", fetchExpenses);
     window.addEventListener("expenseDeleted", fetchExpenses);
     return () => {
       window.removeEventListener("expenseAdded", fetchExpenses);
       window.removeEventListener("expenseDeleted", fetchExpenses);
     };
-  }, []);
+  }, [token]);
 
   return (
     <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">

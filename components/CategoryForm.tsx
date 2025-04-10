@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useAuth } from "./AuthProvider";
 
 export default function CategoryForm() {
   const [name, setName] = useState("");
-
-  const handleSubmit = async (e) => {
+  const { token } = useAuth();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const response = await fetch("/api/categories", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
       body: JSON.stringify({ name }),
     });
     if (response.ok) {

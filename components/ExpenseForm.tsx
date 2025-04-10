@@ -3,26 +3,41 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Category } from "@/types/index.types";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function ExpenseForm() {
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
+  const { token } = useAuth();
 
   useEffect(() => {
-    fetch("/api/categories")
+    if (!token) return;
+    
+    fetch("/api/categories", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then(setCategories);
-  }, []);
+  }, [token]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    if (!token) return;
+    
     const response = await fetch("/api/expenses", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, 
+      },
       body: JSON.stringify({ amount, description, categoryId }),
     });
+    
     if (response.ok) {
       setAmount("");
       setDescription("");
